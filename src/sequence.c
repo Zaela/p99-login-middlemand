@@ -67,8 +67,8 @@ void send_ack(Connection* con, int seq)
     *(uint16_t*)(&ack[2]) = ToNetworkShort(seq != -1 ? seq : con->sequence.expectedSequence - 1);
 
     /* Login server uses zero for its CRC key, always produces two zero bytes for CRCs */
-    ack[4] = 0;
-    ack[5] = 0;
+    /*ack[4] = 0;
+    ack[5] = 0;*/
 
     connection_send(con, ack, 6, 1);
 }
@@ -110,7 +110,7 @@ void sequence_recv(Connection* con, uint8_t* data, int len, int isFragment)
 
     p->isFragment = isFragment;
     p->data = NULL;
-    p->len = len - 2; /* Ignore CRC footer */
+    p->len = len;// - 2; /* Ignore CRC footer */
 
     /* Not the "next" packet? */
     if (seq->expectedSequence != val)
@@ -284,9 +284,9 @@ void filter_server_list(Connection* con, int totalLen)
     *(int*)(&outBuffer[22]) = outCount;
 
     /* Login server uses zero for its CRC key, always produces two zero bytes for CRCs */
-    outBuffer[outLen] = 0;
+    /*outBuffer[outLen] = 0;
     outBuffer[outLen + 1] = 0;
-    outLen += 2;
+    outLen += 2;*/
 
     seq->expectedSequence += index + 1 - seq->fragStart;
     free(serverList);
