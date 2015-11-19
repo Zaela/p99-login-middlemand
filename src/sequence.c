@@ -169,8 +169,9 @@ void check_fragment_finished(Connection* con)
     uint32_t index = seq->fragStart;
     int got;
     Packet* p;
-    int n = seq->fragmentLen / 512;
-    int count = 0;
+    //int n = seq->fragmentLen / 512;
+	int n = (seq->fragmentLen - (512 - 8)) / (512 - 4) + 2;
+    int count = 1;
 
     p = &seq->packets[index];
     got = p->len - sizeof(FirstFrag) + 2; /* AppOpcode is counted */

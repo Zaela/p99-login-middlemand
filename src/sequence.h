@@ -4,6 +4,7 @@
 
 #include "netcode.h"
 #include <stdint.h>
+#include <stdlib.h>
 
 #define SERVER_NAME_PREFIX "Project 1999"
 
