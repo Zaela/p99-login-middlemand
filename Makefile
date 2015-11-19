@@ -1,6 +1,6 @@
 
 CC?= gcc
-CFLAGS= -O2 -Wall
+CFLAGS= -O2 -Wall -Wno-strict-aliasing
 BINDIR= ./bin/
 SRCDIR= ./src/
 OBJDIR= ./build/

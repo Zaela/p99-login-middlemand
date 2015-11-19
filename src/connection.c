@@ -57,7 +57,7 @@ void connection_close(Connection* con)
 void connection_read(Connection* con)
 {
     Address addr;
-    int addrLen = sizeof(Address);
+    socklen_t addrLen = sizeof(Address);
     int len;
     time_t recvTime;
 

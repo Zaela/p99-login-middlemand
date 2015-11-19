@@ -29,6 +29,8 @@
 #ifndef _WIN32
 #define closesocket close
 #define INVALID_SOCKET -1
+#else
+typedef int socklen_t;
 #endif
 
 #endif/*_P99LOGIN_NETCODE_H_*/

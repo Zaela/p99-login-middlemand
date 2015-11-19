@@ -87,7 +87,6 @@ void sequence_recv(Connection* con, uint8_t* data, int len, int isFragment)
 {
     Sequence* seq = &con->sequence;
     uint16_t val = get_sequence(data);
-    uint8_t* copy;
     uint32_t index;
     Packet* p;
 
@@ -169,8 +168,7 @@ void check_fragment_finished(Connection* con)
     uint32_t index = seq->fragStart;
     int got;
     Packet* p;
-    //int n = seq->fragmentLen / 512;
-	int n = (seq->fragmentLen - (512 - 8)) / (512 - 4) + 2;
+    int n = (seq->fragmentLen - (512 - 8)) / (512 - 4) + 2;
     int count = 1;
 
     p = &seq->packets[index];
