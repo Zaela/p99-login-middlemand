@@ -23,6 +23,7 @@ typedef struct Sequence {
     uint16_t expectedSequence;
     uint32_t fragStart;
     int fragmentLen;
+    int sentServerList;
 } Sequence;
 
 void sequence_free(Connection* con);

@@ -83,7 +83,10 @@ void recv_from_remote(Connection* con, int len)
         sequence_free(con);
         break;
     case 0x09: /* OP_Packet */
-        sequence_recv(con, con->buffer, len, 0);
+        if (!con->sequence.sentServerList)
+            sequence_recv(con, con->buffer, len, 0);
+        else
+            *(uint16_t*)(&con->buffer[2]) = ToNetworkShort(0x03);
         break;
     case 0x0d: /* OP_Fragment -- must be one of the server list packets */
         sequence_recv(con, con->buffer, len, 1);

@@ -295,4 +295,6 @@ void filter_server_list(Connection* con, int totalLen)
 
     /* Send the remote side an ack for their last fragment */
     send_ack(con, -1);
+
+    seq->sentServerList = 1;
 }
