@@ -24,12 +24,12 @@ DEPS= $(patsubst %,$(SRCDIR)%,$(_DEPS))
 default all: $(BINDIR)p99-login-middlemand
 
 $(BINDIR)p99-login-middlemand: $(OBJS)
-    $(CC) -o $@ $^ $(CFLAGS)
+	$(CC) -o $@ $^ $(CFLAGS)
 
 $(OBJDIR)%.o: $(SRCDIR)%.c $(DEPS)
-    $(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 .PHONY: clean
 
 clean:
-    rm -f $(OBJDIR)*.o
+	rm -f $(OBJDIR)*.o
