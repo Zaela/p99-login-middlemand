@@ -8,6 +8,9 @@ void connection_open(Connection* con)
     struct addrinfo hints;
     struct addrinfo* remote;
 
+    /* Do this now so we won't segfault if we longjmp from an error below */
+    sequence_init(con);
+
     /* Look up the login server IP */
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;
@@ -35,8 +38,6 @@ void connection_open(Connection* con)
 
     con->inSession = 0;
     con->lastRecvTime = 0;
-    memset(&con->sequence, 0, sizeof(Sequence));
-    con->sequence.expectedSequence = 2;
 }
 
 void connection_close(Connection* con)
@@ -63,11 +64,17 @@ void connection_read(Connection* con)
 
     len = recvfrom(con->socket, (char*)con->buffer, BUFFER_SIZE, 0, (struct sockaddr*)&addr, &addrLen);
 
-    /* Anything less than 4 bytes is not meaningful to us */
-    if (len < 4)
+    if (len < 2)
     {
         if (len == -1)
-            longjmp(con->jmpBuf, ERR_RECVFROM);
+        {
+#ifdef _WIN32
+            if (WSAGetLastError() != WSAECONNRESET)
+#else
+            if (errno != EWOULDBLOCK && errno != EAGAIN && errno != ESHUTDOWN)
+#endif
+                longjmp(con->jmpBuf, ERR_RECVFROM);
+        }
         return;
     }
 
@@ -76,12 +83,12 @@ void connection_read(Connection* con)
     /* Is this packet from the remote login server? */
     if (addr.sin_addr.s_addr == con->remoteAddr.sin_addr.s_addr && addr.sin_port == con->remoteAddr.sin_port)
     {
-        recv_from_remote(con, len);
+        recv_from_remote(con, con->buffer, len);
     }
     else
     {
         /* If this isn't from the login server and we weren't in a session, record the address we received from */
-        if (!con->inSession || (recvTime - con->lastRecvTime) > 10)
+        if (!con->inSession || (recvTime - con->lastRecvTime) > SESSION_TIMEOUT_SECONDS)
             connection_reset(con, &addr);
 
         recv_from_local(con, len);
@@ -100,6 +107,9 @@ void connection_send(Connection* con, void* data, int len, int toRemote)
     else
         addr = &con->localAddr;
 
+#ifdef _DEBUG
+    debug_write_packet((uint8_t*)data, len, !toRemote);
+#endif
     sent = sendto(con->socket, (char*)data, len, 0, (struct sockaddr*)addr, sizeof(Address));
 
     if (sent == -1)

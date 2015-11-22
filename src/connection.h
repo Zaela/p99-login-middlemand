@@ -24,6 +24,7 @@
 #endif
 
 #define BUFFER_SIZE 2048
+#define SESSION_TIMEOUT_SECONDS 60
 
 typedef struct sockaddr_in Address;
 
