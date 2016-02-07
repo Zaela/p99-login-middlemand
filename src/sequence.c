@@ -285,8 +285,7 @@ void filter_server_list(Connection* con, int totalLen)
     /* Write our output packet header */
     outBuffer[0] = 0;
     outBuffer[1] = 0x09; /* OP_Packet */
-    outBuffer[2] = 0;
-    outBuffer[3] = (uint8_t)seq->seqToLocal++;
+    *(uint16_t*)(&outBuffer[2]) = ToNetworkShort(seq->seqToLocal++);
     outBuffer[4] = 0x18; /* OP_ServerListResponse */
     outBuffer[5] = 0;
 
