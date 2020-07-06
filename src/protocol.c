@@ -14,7 +14,7 @@ void debug_write_packet(uint8_t* buf, int len, int loginToClient)
     int i = 0;
     int j, k;
 
-    printf("%llu ", time(NULL));
+    printf("%ld ", time(NULL));
     if (loginToClient)
         printf("LOGIN to CLIENT (len %i):\n", len);
     else
